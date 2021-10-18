@@ -56,7 +56,7 @@ class BertSentClassifier(torch.nn.Module):
         classification_layer=torch.nn.Linear(hidden_dimension,self.num_labels)
         raw_label=classification_layer(pooler_output)
         interm_label=self.classification_dropout(raw_label)
-        output= F.LogSoftmax(interm_label)
+        output= torch.nn.LogSoftmax(interm_label)
 
         return output
         
