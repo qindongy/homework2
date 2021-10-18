@@ -38,7 +38,7 @@ class BertSentClassifier(torch.nn.Module):
                 param.requires_grad = True
 
         # todo
-        self.classification_dropout=F.dropout(config.hidden_dropout_prob)
+        self.classification_dropout=torch.nn.Dropout(config.hidden_dropout_prob)
 
         #raise NotImplementedError
 
@@ -52,7 +52,7 @@ class BertSentClassifier(torch.nn.Module):
         # the final bert contextualize embedding is the hidden state of [CLS] token (the first token)
         last_hidden_state,pooler_output=self.bert(input_ids,attention_mask)
         bs,hidden_dimension=pooler_output.shape
-        classification_layer=F.linear(hidden_dimension,self.num_labels)
+        classification_layer=torch.nn.Linear(hidden_dimension,self.num_labels)
         raw_label=classification_layer(pooler_output)
         interm_label=self.classification_dropout(raw_label)
         output= F.LogSoftmax(interm_label)
