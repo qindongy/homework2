@@ -50,7 +50,8 @@ class BertSentClassifier(torch.nn.Module):
         """
         # todo
         # the final bert contextualize embedding is the hidden state of [CLS] token (the first token)
-        last_hidden_state,pooler_output=self.bert(input_ids,attention_mask)
+        output=self.bert(input_ids,attention_mask)
+        pooler_output=output['pooler_output']
         bs,hidden_dimension=pooler_output.shape
         classification_layer=torch.nn.Linear(hidden_dimension,self.num_labels)
         raw_label=classification_layer(pooler_output)
