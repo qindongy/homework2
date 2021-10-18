@@ -39,6 +39,7 @@ class BertSentClassifier(torch.nn.Module):
 
         # todo
         self.classification_dropout=torch.nn.Dropout(config.hidden_dropout_prob)
+        self.classification_layer=torch.nn.Linear(config.hidden_size,self.num_labels)
 
         #raise NotImplementedError
 
@@ -53,10 +54,9 @@ class BertSentClassifier(torch.nn.Module):
         output=self.bert(input_ids,attention_mask)
         pooler_output=output['pooler_output']
         bs,hidden_dimension=pooler_output.shape
-        classification_layer=torch.nn.Linear(hidden_dimension,self.num_labels)
-        raw_label=classification_layer(pooler_output)
-        interm_label=self.classification_dropout(raw_label)
-        output_softmax= torch.nn.LogSoftmax()
+        raw_label=self.classification_dropout(pooler_output)
+        interm_label=self.classification_layer(raw_label)
+        output_softmax= torch.nn.LogSoftmax(dim=-1)
         output=output_softmax(interm_label)
 
         return output

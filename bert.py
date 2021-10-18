@@ -60,10 +60,12 @@ class BertSelfAttention(nn.Module):
     norm_score=softmax(score)
     # multiply the attention scores to the value and get back V' 
     attention_multi=norm_score@value
-    #print("shape of attention_multi_head",attention_multi.shape)
-    #attention=attention_multi.view(bs, seq_len, num_attention_heads * attention_head_size)
-    attention=attention_multi.reshape((bs,seq_len,-1))
-    #print("shape of total attention",attention.shape)
+    ##[bs, num_attention_heads, seq_len, attention_head_size]
+    print("shape of attention_multi_head",attention_multi.shape)
+    attention_multi=attention_multi.transpose(1,2).contiguous()
+    attention=attention_multi.view(bs, seq_len, num_attention_heads * attention_head_size)
+    #attention=attention_multi.reshape((bs,seq_len,-1))
+    print("shape of total attention",attention.shape)
 
     return attention
     # next, we need to concat multi-heads and recover the original shape [bs, seq_len, num_attention_heads * attention_head_size = hidden_size]
